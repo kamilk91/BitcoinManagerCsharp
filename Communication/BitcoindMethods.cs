@@ -1,4 +1,5 @@
-﻿using BitcoinBasedNode.Model;
+﻿using BitcoinBasedNode.Helpers;
+using BitcoinBasedNode.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -220,8 +221,8 @@ namespace BitcoinBasedNode.Communication
         /// <returns></returns>
         public SendTransactionResult SendTransactions(OutboundTransactions transactions)
         {
-            IRestRequest req = new RestRequest(Method.POST);
-            req = addMandatoryHeader(req);
+            IRestRequest req = GenerateStandardRequest();
+            
             JArray parameter = new JArray();
             parameter.Add("");
             JObject transactionsArray = new JObject();
@@ -247,6 +248,137 @@ namespace BitcoinBasedNode.Communication
             return result;
 
 
+        }
+
+        /// <summary>
+        /// Generate new Bitcoin address 
+        /// </summary>
+        /// <param name="label">
+        /// Friendly name of your address.
+        /// </param>
+        /// 
+        /// <param name="addressType">
+        /// Please, do not use if you don't know what are you doing. Read bitcoin.org.
+        /// </param>
+        /// <returns></returns>
+        public Result GetNewAddress(string label = "", AddressTypes addressType = AddressTypes.legacy)
+        {
+            string addressTypeString = "";
+            if (addressType == AddressTypes.p2shsegwit)
+                addressTypeString = "p2sh-segwit";
+            else
+            {
+                addressTypeString = addressType.ToString();
+            }
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(label);
+            parameter.Add(addressTypeString);
+            JObject obj = BodySkeleton("getnewaddress", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            Result result = JsonConvert.DeserializeObject<Result>(response.Content);
+            return result;
+        }
+
+        /// <summary>
+        /// Generate new Bitcoin address 
+        /// </summary>
+        /// <param name="addressParameters">
+        /// Same method, but with friendly model. 
+        /// </param>
+        /// <returns></returns>
+        public Result GetNewAddress(AddressParameters addressParameters)
+        {
+            string addressTypeString = "";
+            if (addressParameters.addressType == AddressTypes.p2shsegwit)
+                addressTypeString = "p2sh-segwit";
+            else
+            {
+                addressTypeString = addressParameters.addressType.ToString();
+            }
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(addressParameters.label);
+            parameter.Add(addressTypeString);
+            JObject obj = BodySkeleton("getnewaddress", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            Result result = JsonConvert.DeserializeObject<Result>(response.Content);
+            return result;
+        }
+
+        /// <summary>
+        /// Just take a new address, without label and default address format. 
+        /// </summary>
+        /// <returns></returns>
+        public Result GetNewAddress()
+        {
+           
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            JObject obj = BodySkeleton("getnewaddress", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            Result result = JsonConvert.DeserializeObject<Result>(response.Content);
+            return result;
+        }
+
+        /// <summary>
+        /// Simply unlock your encrypted wallet.
+        /// </summary>
+        /// <param name="passphrase">
+        /// Passphrase you specifed when you encrypted wallet. 
+        /// </param>
+        /// <param name="seconds">
+        /// How much time a wallet should be unlocked? 
+        /// </param>
+        /// <returns></returns>
+        public Result UnlockWallet(string passphrase, int seconds)
+        {
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(passphrase);
+            parameter.Add(seconds);
+            JObject obj = BodySkeleton("walletpassphrase", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            Result result = JsonConvert.DeserializeObject<Result>(response.Content);
+            if(result.result == null)
+            {
+                result.result = "unlocked";
+            }
+            return result;
+        }
+
+        /// <summary>
+        ///  Simply unlock your encrypted wallet.
+        /// </summary>
+        /// <param name="data">
+        /// Use model to unlock wallet, and specify human readable time period params. 
+        /// </param>
+        /// <returns></returns>
+        public Result UnlockWallet(UnlockWalletData data)
+        {
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(data.passphrase);
+            int timeForUnlock = TimeCalculator.CalculateTime(data.time);
+            parameter.Add(timeForUnlock);
+            JObject obj = BodySkeleton("walletpassphrase", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            Result result = JsonConvert.DeserializeObject<Result>(response.Content);
+            if (result.result == null)
+            {
+                result.result = "unlocked";
+            }
+            return result;
         }
 
     }

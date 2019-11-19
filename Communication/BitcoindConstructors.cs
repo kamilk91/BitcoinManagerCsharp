@@ -9,7 +9,7 @@ using System.Text;
 
 namespace BitcoinBasedNode.Communication
 {
-    partial class Bitcoind
+    public partial class Bitcoind
     {
         /// <summary>
         /// Create instance of Bitcoind with rpc username and password.
@@ -53,11 +53,14 @@ namespace BitcoinBasedNode.Communication
 
         } 
 
+        private IRestRequest GenerateStandardRequest()
+        {
+            IRestRequest req = new RestRequest(Method.POST);
+            req = addMandatoryHeader(req);
+            return req;
+        }
 
-
-        
-
-
+      
 
 
 
@@ -163,7 +166,10 @@ namespace BitcoinBasedNode.Communication
          * 
          * 
          */
-       
+        public enum AddressTypes { legacy, p2shsegwit, bech32 }
+
+
+
 
     }
 
