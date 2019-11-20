@@ -167,7 +167,7 @@ namespace BitcoinBasedNode.Communication
          * 
          */
         public enum AddressTypes { legacy, p2shsegwit, bech32 }
-
+        public enum TransactionDirection { SENT, RECEIVED, BOTH }
 
 
 

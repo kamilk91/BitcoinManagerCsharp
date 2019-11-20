@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BitcoinBasedNode.Communication
@@ -381,5 +382,144 @@ namespace BitcoinBasedNode.Communication
             return result;
         }
 
+        /// <summary>
+        /// Get transaction by Hash / txid
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        public GetTransactionByTxidResult GetTransactionByTxid(GetTransactionByTxid transaction)
+        {
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(transaction.txid);
+            parameter.Add(transaction.include_watchonly);
+            JObject obj = BodySkeleton("gettransaction", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            GetTransactionByTxidResult res = JsonConvert.DeserializeObject<GetTransactionByTxidResult>(response.Content);
+            return res;
+        }
+
+        /// <summary>
+        /// Get transaction by Hash / txid
+        /// </summary>
+        /// <param name="txid"></param>
+        /// <param name="watchonly"></param>
+        /// <returns></returns>
+        public GetTransactionByTxidResult GetTransactionByTxid(string txid, bool watchonly = false)
+        {
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(txid);
+            parameter.Add(watchonly);
+            JObject obj = BodySkeleton("gettransaction", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+            GetTransactionByTxidResult res = JsonConvert.DeserializeObject<GetTransactionByTxidResult>(response.Content);
+            return res;
+        }
+
+        /// <summary>
+        /// Method to list transactions for specify address.
+        /// </summary>
+        /// <param name="forAddress"></param>
+        /// <returns></returns>
+        public ListTransactionsForAddressResult ListTransactionsForAddress(ListTransactionsForAddress forAddress)
+        {
+            ListTransactionsForAddressResult final = new ListTransactionsForAddressResult();
+            final.transactions = new List<Transaction>();
+            ListTransactionsResult list = ListTransactions(1000000);
+            var transactions = list.result.Where(x => x.address == forAddress.address);
+            if(forAddress.direction == TransactionDirection.SENT)
+            {
+                transactions = transactions.Where(x => x.category == "send");
+            }
+            else if(forAddress.direction == TransactionDirection.RECEIVED)
+            {
+                transactions = transactions.Where(x => x.category == "receive");
+            }
+            transactions = transactions.Select(x => x).OrderByDescending(x => x.blockindex);
+
+            foreach(Transaction trans in transactions)
+            {
+                final.transactions.Add(trans);
+            }
+
+            return final;
+
+        }
+
+        /// <summary>
+        /// Method to list transactions for specify address.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        public ListTransactionsForAddressResult ListTransactionsForAddress(string address, TransactionDirection direction = TransactionDirection.BOTH)
+        {
+            ListTransactionsForAddressResult final = new ListTransactionsForAddressResult();
+            final.transactions = new List<Transaction>();
+            ListTransactionsResult list = ListTransactions(1000000);
+            var transactions = list.result.Where(x => x.address == address);
+            if (direction == TransactionDirection.SENT)
+            {
+                transactions = transactions.Where(x => x.category == "send");
+            }
+            else if (direction == TransactionDirection.RECEIVED)
+            {
+                transactions = transactions.Where(x => x.category == "receive");
+            }
+            transactions = transactions.Select(x => x).OrderByDescending(x => x.blockindex);
+
+            foreach (Transaction trans in transactions)
+            {
+                final.transactions.Add(trans);
+            }
+
+            return final;
+
+        }
+        /// <summary>
+        /// Classic Bitcoin Core method to see how much crypto address received.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public GetReceivedByAddressResult GetReceivedByAddress(GetReceivedByAddress address)
+        {
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(address.address);
+            parameter.Add(address.minconf);
+            JObject obj = BodySkeleton("getreceivedbyaddress", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+
+            GetReceivedByAddressResult result = JsonConvert.DeserializeObject<GetReceivedByAddressResult>(response.Content);
+            return result;
+        }
+
+        /// <summary>
+        /// Classic Bitcoin Core method to see how much crypto address received.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="minconf"></param>
+        /// <returns></returns>
+        public GetReceivedByAddressResult GetReceivedByAddress(string address, int minconf = 1)
+        {
+            IRestRequest req = GenerateStandardRequest();
+            JArray parameter = new JArray();
+            parameter.Add(address);
+            parameter.Add(minconf);
+            JObject obj = BodySkeleton("getreceivedbyaddress", parameter);
+            req.AddJsonBody(obj.ToString());
+            var response = client.Execute(req);
+            ValidateResponse(response);
+
+            GetReceivedByAddressResult result = JsonConvert.DeserializeObject<GetReceivedByAddressResult>(response.Content);
+            return result;
+        }
     }
 }
