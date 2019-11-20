@@ -1,13 +1,6 @@
-# Use in your project
+## Introduction
 
-### Install with PackageManager
-```Install-Package BitcoinManagerCsharp ``` 
-### Install with .NET CLI
-```dotnet add package BitcoinManagerCsharp```
-### Add reference
-```<PackageReference Include="BitcoinManagerCsharp"  />```
-### Add with Paket CLI
-```paket add BitcoinManagerCsharp ```
+Just build, and configure node. 
 
 # What's contained in this project
 
@@ -93,8 +86,3 @@ month = 60 * 60 * 24 * 30;
 year = 60 * 60 * 24 * 365;
  ```
  So "year" here is ```31,536,000 seconds```  which gives exactly 365 days. 
- 
- # Credits
- - [Github](https://github.com/kamilk91/BitcoinManagerCsharp)
- - [Nuget.org](https://www.nuget.org/packages/BitcoinManagerCsharp/)
- 
