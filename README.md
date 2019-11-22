@@ -37,6 +37,65 @@ Methods does not exist in Bitcoin Core, and are created by myself:
 - tests
 - tests with altcoins built on Bitcoin skeleton
 
+## Subscribe to new transactions notifier
+
+1. Create new instance of Bitcoind 
+```
+Bitcoind inst = new Bitcoind("a", "b");
+```
+2. Create instance of Notifier, using your Bitcoind Instance
+
+```
+Notifier n = new Notifier(inst,1000, DataType.LOCAL);
+```
+note that you can use DataType LOCAL or DATABASE. Local is faster, database will create SQLite file on your disk, and will save transactions. As you think, LOCAL data disapear when program with program ends. 
+default interval is 1000, and it works good. Its enough for Bitcoin.
+
+3. Subscribe to event
+```
+n.onTransaction += N_onTransaction;
+```
+4. and tell program what to do, if new transaction is detected:
+```
+   private static void N_onTransaction(Transaction transaction)
+        {
+            Console.WriteLine($"new transaction on {transaction.amount} for {transaction.address} with # {transaction.txid}");
+        }
+```
+
+Full example
+
+```
+using System;
+using BitcoinBasedNode.Model;
+using BitcoinBasedNode.Communication;
+using System.Collections.Generic;
+using BitcoinBasedNode.Notifications;
+
+namespace BitcoinBasedNode
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Bitcoind inst = new Bitcoind("a", "b");
+            Notifier n = new Notifier(inst,1000, DataType.LOCAL);
+            n.onTransaction += N_onTransaction;
+
+            Console.ReadLine();
+           
+
+        }
+
+        private static void N_onTransaction(Transaction transaction)
+        {
+            Console.WriteLine($"new transaction on {transaction.amount} for {transaction.address} with # {transaction.txid}");
+        }
+    }
+}
+```
+
+
 ## ListTransactionsForAddress method info
 
 I made special method, which is very usefull, and it does not exist in Bitcoin Core API. It allows you to see details about transactions for specify address. It is sorted by block descending, so you should see from newer to oldest. 

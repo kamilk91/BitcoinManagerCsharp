@@ -3,11 +3,26 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <PackageId>BitcoinManagerCsharp</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Kamil Kostrzewski</Authors>
+    <Company>ITSharkz</Company>
+    <Product>BitcoinManagerCsharp</Product>
+    <Copyright>Kamil Kostrzewski</Copyright>
+    <Description>Make Bitcoin easy to use with Csharp again! Package created with .Net Core 3.0, should be compatible with every framework, and core options.</Description>
+    <PackageProjectUrl>https://github.com/kamilk91/BitcoinManagerCsharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kamilk91/BitcoinManagerCsharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>bitcoin, cryptocurrency, cryptography</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0-preview3.19554.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.0-preview3.19554.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta2" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
+    <PackageReference Include="sqlite" Version="3.13.0" />
   </ItemGroup>
 
 </Project>

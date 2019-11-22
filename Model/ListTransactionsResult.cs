@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace BitcoinBasedNode.Model
 {
     public class Transaction
     {
+        [Key]
+        public int id { get; set; }
         public string address { get; set; }
         public string category { get; set; }
         public decimal amount { get; set; }
@@ -16,7 +19,7 @@ namespace BitcoinBasedNode.Model
         public int blockindex { get; set; }
         public int blocktime { get; set; }
         public string txid { get; set; }
-        public IList<object> walletconflicts { get; set; }
+        //public IList<object> walletconflicts { get; set; }
         public int time { get; set; }
         public int timereceived { get; set; }
 
