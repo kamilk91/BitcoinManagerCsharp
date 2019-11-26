@@ -40,7 +40,7 @@ namespace BitcoinBasedNode.Communication
         private readonly string rpcPassword;
         private readonly string host;
         private readonly string port;
-        RestClient client;
+        private RestClient client;
 
         private void NodeAlive()
         {

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace BitcoinBasedNode.Communication
 {
-    partial class Bitcoind
+    partial class Bitcoind : ICryptoBase, ICryptoExtended
     {
         /// <summary>
         /// Get total active balance on your wallet. (Default main wallet, and minimum 0 confirmations. Totally basic usage of getbalance method)
@@ -28,6 +28,7 @@ namespace BitcoinBasedNode.Communication
             return result;
         }
 
+        
         /// <summary>
         /// Get total active balance for specified minimum confirmations.
         /// </summary>

@@ -12,7 +12,7 @@ namespace BitcoinBasedNode.Notifications
     /// 
 
     public enum DataType { LOCAL, DATABASE }
-    class Notifier
+    public class Notifier
     {
         private Timer IntervalTimer;
         private int Interval;
